@@ -1,48 +1,48 @@
-import React from 'react';
-import { useLoaderData } from 'react-router';
-import Swal from 'sweetalert2';
+import React from "react";
+import { useLoaderData } from "react-router";
+import Swal from "sweetalert2";
 
 const UpdateCoffee = () => {
-    const {_id, name, price, quantity, photo,taste,details,supplier} = useLoaderData();
-    const handleUpdateCoffee = e => {
-        e.preventDefault()
-        const form = e.target;
-        const formData = new FormData(form);
-        const updatedCoffee = Object.fromEntries(formData.entries())
-        console.log(updatedCoffee)
+  const { _id, name, price, quantity, photo, taste, details, supplier } =
+    useLoaderData();
+  const handleUpdateCoffee = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const updatedCoffee = Object.fromEntries(formData.entries());
+    console.log(updatedCoffee);
 
-        // send update coffee to the db
-        fetch(`http://localhost:3000/coffees/${_id}`,{
-            method:'PUT',
-            headers:{
-                'content-type':'application/json'
+    // send update coffee to the db
+    fetch(`https://coffee-store-server-three-sable.vercel.app/coffees/${_id}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(updatedCoffee),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.modifiedCount) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
             },
-            body:JSON.stringify(updatedCoffee)
-        })
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.modifiedCount){
-                const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-                });
-                Toast.fire({
-                icon: "success",
-                title: "Coffee update successfully"
-                });
-            }
-        })
-
-    }
-    return (
-        <div className="p-24">
+          });
+          Toast.fire({
+            icon: "success",
+            title: "Coffee update successfully",
+          });
+        }
+      });
+  };
+  return (
+    <div className="p-24">
       <div className="p-12 text-center space-y-4">
         <h1 className="text-6xl">Update Coffee</h1>
       </div>
@@ -122,7 +122,7 @@ const UpdateCoffee = () => {
         <input type="submit" className="btn w-full" value="Update Coffee" />
       </form>
     </div>
-    );
+  );
 };
 
 export default UpdateCoffee;
